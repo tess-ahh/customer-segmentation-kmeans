@@ -263,4 +263,9 @@ The generated customer segments can help businesses:
 
 ---
 
+## Live Demo
+
+🚀 **Try the deployed Streamlit application:**
+
+https://customer-segmentation-kmeans-endfsutsr.streamlit.app/
 
