@@ -30,7 +30,26 @@ def load_data():
 
 df = load_data()
 
+# --------------------------------------------------
+# Automatic Cluster Naming
+# --------------------------------------------------
 
+def get_cluster_name(income, spending, income_median, spending_median):
+
+    high_income = income >= income_median
+    high_spending = spending >= spending_median
+
+    if high_income and high_spending:
+        return "Target Customers"
+
+    elif high_income and not high_spending:
+        return "Potential Customers"
+
+    elif not high_income and high_spending:
+        return "Impulse Buyers"
+
+    else:
+        return "Budget Customers"
 # --------------------------------------------------
 # Train K-Means Model
 # --------------------------------------------------
@@ -75,9 +94,8 @@ st.sidebar.info(
 
 if page == "Home":
 
-    st.title("👥 Customer Segmentation using K-Means")
+    st.title("👥 K-Means Clustering for Customer Segmentation")
 
-    st.subheader("Machine Learning Customer Segmentation System")
 
     st.write(
         """
@@ -89,16 +107,31 @@ if page == "Home":
 
     st.divider()
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.metric("Total Customers", len(df))
+        st.metric(
+            "👥 Total Customers",
+            len(df)
+        )
 
     with col2:
-        st.metric("Features Used", 2)
+        st.metric(
+            "📊 Features",
+            "2"
+        )
 
     with col3:
-        st.metric("Optimal Clusters", 5)
+        st.metric(
+            "🎯 Optimal K",
+            "5"
+        )
+
+    with col4:
+        st.metric(
+            "📈 Silhouette Score",
+            "0.554"
+        )
 
     st.divider()
 
@@ -114,13 +147,53 @@ if page == "Home":
         and customer retention programs.
         """
     )
+    # How It Works
+    st.subheader("⚙️ How It Works")
 
-    st.subheader("Technologies Used")
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown("### 1️⃣ Explore")
+        st.write(
+            "Analyze customer demographics and purchasing behavior."
+        )
+
+    with col2:
+        st.markdown("### 2️⃣ Cluster")
+        st.write(
+            "Apply K-Means clustering to identify customer groups."
+        )
+
+    with col3:
+        st.markdown("### 3️⃣ Understand")
+        st.write(
+            "Interpret each segment and derive business insights."
+        )
+
+    st.divider()
+    st.subheader("📌 Features Used for Clustering")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("### 💰 Annual Income")
+        st.write(
+            "Customer annual income measured in thousands of dollars."
+        )
+
+    with col2:
+        st.markdown("### 🛍️ Spending Score")
+        st.write(
+            "A score between 1 and 100 representing customer spending behavior."
+        )
+
+    st.divider()
+    st.subheader("🛠️ Technologies Used")
 
     st.write(
         """
-        Python • Pandas • NumPy • Scikit-learn • Matplotlib •
-        Seaborn • Streamlit
+        **Python**  • **Pandas**  • **NumPy**  • **Scikit-learn**  •
+        **Matplotlib**  • **Seaborn**  • **Streamlit**
         """
     )
 
@@ -265,6 +338,13 @@ elif page == "EDA":
 elif page == "K-Means Clustering":
 
     st.title("🤖 K-Means Customer Clustering")
+    st.markdown(
+        """
+        Explore customer segments using the **K-Means clustering
+        algorithm**. Adjust the number of clusters and observe
+        how the segmentation changes.
+        """
+    )
 
     st.subheader("Elbow Method")
 
@@ -296,7 +376,10 @@ elif page == "K-Means Clustering":
     ax.set_title("Elbow Method")
 
     st.pyplot(fig)
-
+    st.info(
+        "The Elbow Method suggests K = 5 as the optimal number "
+        "of clusters for this dataset."
+    )
     st.divider()
 
     st.subheader("Select Number of Clusters")
@@ -335,6 +418,35 @@ elif page == "K-Means Clustering":
         f"{score:.3f}"
     )
 
+    st.subheader("📊 Model Evaluation")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric(
+            "Number of Clusters",
+            k
+        )
+
+    with col2:
+        st.metric(
+            "Silhouette Score",
+            f"{score:.3f}"
+        )
+
+    with col3:
+        st.metric(
+            "Customers",
+            len(df_clustered)
+        )
+
+    if k == 5:
+        st.success(
+            "K = 5 matches the optimal value identified by "
+            "the Elbow Method."
+        )
+
+    st.divider()
     # Visualization
 
     st.subheader("Customer Clusters")
@@ -385,7 +497,34 @@ elif page == "K-Means Clustering":
         use_container_width=True
     )
 
+    st.subheader("📈 Understanding the Silhouette Score")
 
+    st.write(
+        """
+        The Silhouette Score measures how well each customer
+        fits within its assigned cluster compared with other
+        clusters.
+
+        A higher score generally indicates better-defined and
+        more separated clusters.
+        """
+    )
+
+    if score >= 0.5:
+        st.success(
+            f"The current Silhouette Score is {score:.3f}, "
+            "indicating reasonably well-separated clusters."
+        )
+    elif score >= 0.25:
+        st.warning(
+            f"The current Silhouette Score is {score:.3f}, "
+            "indicating moderate cluster separation."
+        )
+    else:
+        st.error(
+            f"The current Silhouette Score is {score:.3f}, "
+            "indicating weak cluster separation."
+        )
 # --------------------------------------------------
 # CUSTOMER SEGMENTS
 # --------------------------------------------------
@@ -393,6 +532,13 @@ elif page == "K-Means Clustering":
 elif page == "Customer Segments":
 
     st.title("👥 Customer Segment Analysis")
+    st.markdown(
+        """
+        This section summarizes the characteristics of each
+        customer cluster and automatically assigns a meaningful
+        business-oriented name based on income and spending behavior.
+        """
+    )
 
     kmeans = KMeans(
         n_clusters=5,
@@ -435,7 +581,7 @@ elif page == "Customer Segments":
             cluster,
             f"Cluster {cluster}"
         )
-
+        
         st.write(
             f"**Cluster {cluster}: {name}**"
         )
@@ -451,7 +597,7 @@ elif page == "Customer Segments":
         )
 
         st.divider()
-
+    
     # Download
 
     st.subheader("Download Clustered Dataset")

@@ -139,6 +139,27 @@ notebooks/Customer_Segmentation.ipynb
 Run all cells.
 
 ---
+Running the Streamlit Application
+
+The project includes an interactive Streamlit web application.
+
+Start the application using:
+
+streamlit run app.py
+
+The application will open in your web browser.
+
+The Streamlit application provides:
+
+Home dashboard
+Dataset exploration
+Exploratory Data Analysis
+Elbow Method visualization
+Interactive K-Means clustering
+Silhouette Score evaluation
+Customer cluster visualization
+Customer segment interpretation
+Clustered dataset download
 
 ## Data Preprocessing
 
@@ -242,15 +263,4 @@ The generated customer segments can help businesses:
 
 ---
 
-## Future Improvements
-
-Possible enhancements include:
-
-- Using additional customer features
-- Comparing with DBSCAN and Hierarchical Clustering
-- Deploying the project using Streamlit
-- Integrating real-time customer data
-- Automated customer recommendation system
-
----
 
